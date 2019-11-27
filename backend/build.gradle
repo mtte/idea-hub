@@ -9,12 +9,6 @@ mainClassName = 'me.mtte.code.ideahub.Application'
 
 sourceCompatibility = 11
 
-jar {
-    manifest {
-        attributes "Main-Class": mainClassName
-    }
-}
-
 repositories {
     mavenCentral()
 }
