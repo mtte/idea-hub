@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend/
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    container_name: frontend
+    ports:
+      - 8080:80
+  backend:
+    build: 
+      context: ./backend/
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    container_name: backend
+    depends_on:
+      - db
+    ports:
+      - 8181:80
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    ports:
+      - 3306:3306
+    env_file: 
+      - backend/db.env
+    volumes:
+      - dbdata:/var/lib/postgressql/data/
+
+volumes:
+  dbdata:
