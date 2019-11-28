@@ -1,7 +1,9 @@
 package me.mtte.code.ideahub;
 
+import org.slf4j.LoggerFactory;
+
 public class Application {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        LoggerFactory.getLogger(Application.class).trace("Hello World!");
     }
 }
