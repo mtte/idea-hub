@@ -28,7 +28,7 @@ services:
     container_name: db
     restart: always
     ports:
-      - 3306:3306
+      - 5432:5432
     env_file: 
       - backend/db.env
     volumes:
