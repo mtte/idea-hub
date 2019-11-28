@@ -33,6 +33,7 @@ services:
       - backend/db.env
     volumes:
       - dbdata:/var/lib/postgressql/data/
+      - ./database/:/docker-entrypoint-initdb.d/
 
 volumes:
   dbdata:

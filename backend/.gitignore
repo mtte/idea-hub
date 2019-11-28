@@ -134,3 +134,6 @@ gradle-app.setting
 
 # Logs
 logs/
+
+# jOOQ generated files
+src/main/java/me/mtte/code/ideahub/database
