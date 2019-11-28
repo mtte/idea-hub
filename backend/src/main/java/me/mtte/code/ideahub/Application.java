@@ -1,9 +1,15 @@
 package me.mtte.code.ideahub;
 
-import org.slf4j.LoggerFactory;
+import static spark.Spark.*;
 
 public class Application {
+
     public static void main(String[] args) {
-        LoggerFactory.getLogger(Application.class).trace("Hello World!");
+        port(80);
+
+        get("/", (req, res) -> "Hello World!");
+
+        after((req, res) -> res.header("Content-Encoding", "gzip"));
     }
+
 }
