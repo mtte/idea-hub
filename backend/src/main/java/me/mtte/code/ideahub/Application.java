@@ -6,7 +6,6 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import static me.mtte.code.ideahub.database.ideahub.tables.Category.CATEGORY;
 import static spark.Spark.*;
 
 public class Application {
@@ -19,15 +18,14 @@ public class Application {
     }
 
     private static void setupDatabase() {
-        // TODO: Do not use hardcoded values
         HikariConfig config = new HikariConfig();
         config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
-        config.setUsername("ideahub");
-        config.setPassword("pass4dev");
-        config.addDataSourceProperty("databaseName", "ideahub");
+        config.setUsername(System.getenv("POSTGRES_USER"));
+        config.setPassword(System.getenv("POSTGRES_PASSWORD"));
+        config.addDataSourceProperty("databaseName", System.getenv("POSTGRES_DB"));
         config.addDataSourceProperty("serverName", "localhost");
         config.addDataSourceProperty("portNumber", "5432");
-        config.addDataSourceProperty("currentSchema", "ideahub");
+        config.addDataSourceProperty("currentSchema", System.getenv("POSTGRES_DB"));
 
         HikariDataSource dataSource = new HikariDataSource(config);
         dsl = DSL.using(dataSource, SQLDialect.POSTGRES);
