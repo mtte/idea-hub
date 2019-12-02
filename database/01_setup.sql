@@ -1,7 +1,12 @@
 -- SCRIPT TO CREATE THE DATABASE
 
+-- SCHEMA ideahub
+CREATE SCHEMA IF NOT EXISTS ideahub;
+
+ALTER SCHEMA ideahub OWNER TO ideahub;
+
 -- TABLE user
-CREATE TABLE IF NOT EXISTS public."user"
+CREATE TABLE IF NOT EXISTS ideahub."user"
 (
     id       SERIAL       NOT NULL,
     name     VARCHAR(50)  NOT NULL UNIQUE,
@@ -11,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public."user"
 );
 
 -- TABLE note
-CREATE TABLE IF NOT EXISTS public.note
+CREATE TABLE IF NOT EXISTS ideahub.note
 (
     id      SERIAL       NOT NULL,
     title   VARCHAR(100) NOT NULL,
@@ -20,11 +25,11 @@ CREATE TABLE IF NOT EXISTS public.note
     author  INT          NOT NULL,
     shared  BOOLEAN      NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
-    FOREIGN KEY (author) REFERENCES public."user" (id)
+    FOREIGN KEY (author) REFERENCES ideahub."user" (id)
 );
 
 -- TABLE category
-CREATE TABLE IF NOT EXISTS public.category
+CREATE TABLE IF NOT EXISTS ideahub.category
 (
     id   SERIAL       NOT NULL,
     name VARCHAR(100) NOT NULL UNIQUE,
@@ -32,11 +37,11 @@ CREATE TABLE IF NOT EXISTS public.category
 );
 
 -- TABLE note_has_category
-CREATE TABLE IF NOT EXISTS public.note_has_category
+CREATE TABLE IF NOT EXISTS ideahub.note_has_category
 (
     note     INT NOT NULL,
     category INT NOT NULL,
     PRIMARY KEY (note, category),
-    FOREIGN KEY (note) REFERENCES public.note (id),
-    FOREIGN KEY (category) REFERENCES public.category (id)
+    FOREIGN KEY (note) REFERENCES ideahub.note (id),
+    FOREIGN KEY (category) REFERENCES ideahub.category (id)
 );

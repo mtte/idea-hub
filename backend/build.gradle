@@ -19,6 +19,7 @@ dependencies {
     implementation group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
 
     // DB
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.1'
     implementation group: 'org.jooq', name: 'jooq'
     runtime group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
     jooqRuntime group: 'org.jooq.trial', name: 'jooq-meta-extensions', version: '3.12.3'
@@ -42,6 +43,10 @@ jooq {
                     property {
                         key = 'scripts'
                         value = '../database/01_setup.sql'
+                    }
+                    property {
+                        key = 'defaultNameCase'
+                        value = 'lower'
                     }
                 }
             }
