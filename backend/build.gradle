@@ -52,7 +52,7 @@ jooq {
             }
             target {
                 packageName = 'me.mtte.code.ideahub.database'
-                directory = 'src/main/java'
+                directory = 'build/generated-src/jooq'
                 clean = true
             }
         }
