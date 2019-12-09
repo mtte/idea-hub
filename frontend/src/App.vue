@@ -37,12 +37,12 @@
 
       <v-btn
         fab
-        color="white accent-2"
+        color="amber accent-4"
         bottom
         right
         absolute
       >
-        <v-icon color="black">
+        <v-icon color="deep-purple darken-4">
           mdi-plus
         </v-icon>
       </v-btn>
