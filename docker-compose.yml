@@ -23,6 +23,8 @@ services:
       - db
     ports:
       - 8181:80
+    env_file: 
+      - backend/db.env
   db:
     image: postgres
     container_name: db
