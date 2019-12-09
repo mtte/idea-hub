@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
+      color="deep-purple darken-4"
       dark
     >
       <div class="d-flex align-center">
@@ -28,30 +28,40 @@
       <v-spacer />
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+        icon
+        large
+        style="margin-right: 70px"
       >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+        <v-icon>mdi-account-supervisor</v-icon>
+      </v-btn>
+
+      <v-btn
+        fab
+        color="white accent-2"
+        bottom
+        right
+        absolute
+      >
+        <v-icon color="black">
+          mdi-plus
+        </v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-content>
-      <HelloWorld />
+      <v-container
+        fluid
+      >
+        <router-view />
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 
 export default {
   name: 'App',
-
-  components: {
-    HelloWorld
-  },
 
   data: () => ({
     //
