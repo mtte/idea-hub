@@ -1,7 +1,11 @@
 package me.mtte.code.ideahub.responses;
 
+import me.mtte.code.ideahub.validation.ValidationError;
+import me.mtte.code.ideahub.validation.ValidationResult;
 import spark.Request;
 import spark.Response;
+
+import java.util.StringJoiner;
 
 public class ResponseFactory {
 
@@ -22,6 +26,20 @@ public class ResponseFactory {
     public static ErrorResponse createInvalidParameterError(Response response, String parameter, String value, String message, Object... args) {
         response.status(400);
         return new ErrorResponse("Invalid Parameter: '%s' with value '%s'. %s.", parameter, value, String.format(message, args));
+    }
+
+    public static ErrorResponse createParameterValidationErrorResponse(Response response, String parameter, ValidationResult result) {
+        if (result.succeeded()) {
+            throw new IllegalStateException("The validation caused no error!");
+        }
+
+        response.status(400);
+
+        StringJoiner message = new StringJoiner("\n", "Invalid parameter: Validation of the parameter '%s' failed.\n", "");
+        for (ValidationError error : result.getErrors()) {
+            message.add(error.getError());
+        }
+        return new ErrorResponse(message.toString(), parameter);
     }
 
 }
