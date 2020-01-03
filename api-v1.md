@@ -8,6 +8,8 @@
 POST /v1/login
 ```
 
+Required parameters: **username, password**
+
 ### Users
 
 #### List all Users
@@ -28,11 +30,15 @@ GET /v1/users/{id}
 POST /v1/users
 ```
 
+Required parameters: **username, password, role**
+
 #### Update User
 
 ```http
 PUT /v1/users/{id}
 ```
+
+Optional parameters: **username, role**
 
 #### Delete User
 
