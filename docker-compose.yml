@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     ports:
-      - 8181:80
+      - 8181:4567
     env_file: 
       - backend/db.env
       - backend/.env
