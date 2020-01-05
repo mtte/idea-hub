@@ -5,25 +5,13 @@
       color="deep-purple darken-4"
       dark
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+      <router-link
+        class="d-flex align-center headline"
+        to="/"
+        style="text-decoration: none; color: white;"
+      >
+        <span>IDEA</span><span class="font-weight-black">HUB</span>
+      </router-link>
 
       <v-spacer />
 
@@ -31,6 +19,7 @@
         icon
         large
         style="margin-right: 70px"
+        to="userOverview"
       >
         <v-icon>mdi-account-supervisor</v-icon>
       </v-btn>
