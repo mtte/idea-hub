@@ -52,8 +52,10 @@
 export default {
   name: 'App',
 
-  data: () => ({
-    //
-  })
+  data () {
+    return {
+    }
+  }
+
 }
 </script>

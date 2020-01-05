@@ -30,4 +30,39 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  const publicPages = ['login']
+  const authorPages = ['']
+  const adminPages = ['userOverview']
+  const user = JSON.parse(localStorage.getItem('user'))
+  const isLoggedIn = user !== null
+
+  const authRequired = !publicPages.includes(to.name)
+  const authorRequired = authorPages.includes(to.name)
+  const adminRequired = adminPages.includes(to.name)
+
+  // eslint-disable-next-line no-debugger
+  // debugger
+
+  if (authRequired && !isLoggedIn) {
+    next('/login')
+    return
+  }
+
+  if (authRequired && isLoggedIn) {
+    const isAuthor = user.role === 'AUTHOR'
+    const isAdmin = user.role === 'ADMIN'
+
+    if (authorRequired && (!isAuthor || !isAdmin)) {
+      return next(from)
+    }
+
+    if (adminRequired && !isAdmin) {
+      return next(from)
+    }
+  }
+
+  next()
+})
+
 export default router
