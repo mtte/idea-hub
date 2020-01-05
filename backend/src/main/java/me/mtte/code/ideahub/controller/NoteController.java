@@ -144,7 +144,12 @@ public class NoteController implements RouteGroup {
             }
         }
 
-        return this.noteService.updateNote(getRequestId(request), title, content, isShared);
+        var updated = this.noteService.updateNote(getRequestId(request), title, content, isShared);
+        if (updated == null) {
+            return ResponseFactory.createInvalidIdError(request, response);
+        }
+
+        return updated;
     }
 
 }
