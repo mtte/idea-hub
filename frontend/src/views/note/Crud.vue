@@ -1,14 +1,17 @@
 <template>
   <v-container>
     <h1>Notiz {{ mode }}</h1>
-    <form
+    <v-form
       v-if="note"
+      ref="form"
       @submit.prevent="save"
     >
       <v-text-field
         v-model="note.title"
         label="Titel"
         required
+        :counter="100"
+        :rules="titleRules"
       />
       <v-switch
         v-model="note.isShared"
@@ -18,13 +21,15 @@
         <v-col cols="6">
           <v-textarea
             v-model="note.content"
+            :rules="[v => !!v || 'Pflichtfeld']"
+            label="Inhalt (Markdown)"
           />
         </v-col>
         <v-col cols="6">
           <vue-markdown :source="note.content" />
         </v-col>
       </v-row>
-    </form>
+    </v-form>
     <v-btn
       color="amber accent-4"
       fab
@@ -68,7 +73,12 @@ export default {
       mode: '',
       error: '',
       snackbar: false,
-      snackbarText: ''
+      snackbarText: '',
+      titleRules: [
+        v => !!v || 'Titel ist ein Pflichtfeld',
+        v => (v && v.length >= 5) || 'Titel muss mindestens 5 Zeichen lang sein',
+        v => (v && v.length <= 100) || 'Titel darf maximal 100 Zeichen lang sein'
+      ]
     }
   },
   mounted () {
@@ -91,27 +101,29 @@ export default {
   },
   methods: {
     save () {
-      if (this.mode === 'new') {
-        const payload = {
-          'title': this.note.title,
-          'content': this.note.content,
-          'shared': this.note.isShared
+      if (this.$refs.form.validate()) {
+        if (this.mode === 'new') {
+          const payload = {
+            'title': this.note.title,
+            'content': this.note.content,
+            'shared': this.note.isShared
+          }
+          this.axios.post('/notes', payload).then(response => {
+            this.snackbarText = 'Erfolgreich erstelllt'
+            this.snackbar = true
+          })
         }
-        this.axios.post('/notes', payload).then(response => {
-          this.snackbarText = 'Erfolgreich erstelllt'
-          this.snackbar = true
-        })
-      }
-      if (this.mode === 'edit') {
-        const payload = {
-          'title': this.note.title,
-          'content': this.note.content,
-          'shared': this.note.isShared
+        if (this.mode === 'edit') {
+          const payload = {
+            'title': this.note.title,
+            'content': this.note.content,
+            'shared': this.note.isShared
+          }
+          this.axios.put(`/notes/${this.note.id}`, payload).then(response => {
+            this.snackbarText = 'Erfolgreich gespeichert'
+            this.snackbar = true
+          })
         }
-        this.axios.put(`/notes/${this.note.id}`, payload).then(response => {
-          this.snackbarText = 'Erfolgreich gespeichert'
-          this.snackbar = true
-        })
       }
     }
   }
