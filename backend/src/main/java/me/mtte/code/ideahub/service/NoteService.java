@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static me.mtte.code.ideahub.database.ideahub.tables.Note.NOTE;
+import static me.mtte.code.ideahub.database.ideahub.tables.User.USER;
 
 public class NoteService extends AbstractService {
 
@@ -19,16 +20,27 @@ public class NoteService extends AbstractService {
     }
 
     public Optional<Note> getNote(int id) {
-        var note = getDb().fetchOptional(NOTE, NOTE.ID.eq(id));
-        return note.map(Note::new);
+        var note = getDb().select(NOTE.ID, USER.NAME, NOTE.TITLE, NOTE.CONTENT, NOTE.CREATED, NOTE.SHARED)
+                .from(NOTE)
+                .join(USER)
+                .on(NOTE.AUTHOR.eq(USER.ID))
+                .where(NOTE.ID.eq(id))
+                .fetchOptional();
+
+        return note.map(r -> new Note(r.value1(), r.value2(), r.value3(), r.value4(), r.value5(), r.value6()));
     }
 
     public List<Note> getAllNotesForUser(int userId) {
-        var result = getDb().selectFrom(NOTE)
+        var result = getDb().select(NOTE.ID, USER.NAME, NOTE.TITLE, NOTE.CONTENT, NOTE.CREATED, NOTE.SHARED)
+                .from(NOTE)
+                .join(USER)
+                .on(NOTE.AUTHOR.eq(USER.ID))
                 .where(NOTE.AUTHOR.eq(userId)
                         .or(NOTE.SHARED))
                 .fetch();
-        return result.stream().map(Note::new).collect(Collectors.toList());
+        return result.stream()
+                .map(r -> new Note(r.value1(), r.value2(), r.value3(), r.value4(), r.value5(), r.value6()))
+                .collect(Collectors.toList());
     }
 
     public boolean deleteNote(int id) {

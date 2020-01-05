@@ -4,6 +4,7 @@ import me.mtte.code.ideahub.auth.AuthFilter;
 import me.mtte.code.ideahub.auth.Role;
 import me.mtte.code.ideahub.controller.LoginController;
 import me.mtte.code.ideahub.controller.NoteController;
+import me.mtte.code.ideahub.controller.TwoFactorAuthController;
 import me.mtte.code.ideahub.controller.UserController;
 import me.mtte.code.ideahub.database.Database;
 import me.mtte.code.ideahub.service.NoteService;
@@ -25,6 +26,7 @@ public class Api implements RouteGroup {
     private final LoginController loginController;
     private final UserController userController;
     private final NoteController noteController;
+    private final TwoFactorAuthController twoFactorAuthController;
 
     public Api(Database database, Config securityConfig) {
         this.loggedInUser = new AuthFilter(securityConfig);
@@ -35,11 +37,15 @@ public class Api implements RouteGroup {
         this.loginController = new LoginController(userService);
         this.userController = new UserController(userService);
         this.noteController = new NoteController(noteService);
+        this.twoFactorAuthController = new TwoFactorAuthController(userService);
     }
 
     @Override
     public void addRoutes() {
         post("/login", this.loginController::handleLogin, json());
+
+        before("/2fa", this.loggedInUser);
+        path("/2fa", this.twoFactorAuthController);
 
         before("/users", this.adminFilter);
         before("/users/*", this.adminFilter);
