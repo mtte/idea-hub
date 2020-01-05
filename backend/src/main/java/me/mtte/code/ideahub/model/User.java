@@ -10,6 +10,7 @@ public class User {
     private final String username;
     private final Role role;
     private String password;
+    private String twoFactorAuthSecret;
 
     public User(UserRecord userRecord) {
         this(userRecord.getId(), userRecord.getName(), Role.getByName(userRecord.getRole()));
@@ -39,6 +40,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTwoFactorAuthSecret() {
+        return twoFactorAuthSecret;
+    }
+
+    public void setTwoFactorAuthSecret(String twoFactorAuthSecret) {
+        this.twoFactorAuthSecret = twoFactorAuthSecret;
     }
 
 }

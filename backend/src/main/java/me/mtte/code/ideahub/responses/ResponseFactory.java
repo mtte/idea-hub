@@ -13,7 +13,7 @@ public class ResponseFactory {
 
     public static ErrorResponse createInvalidIdError(Request request, Response response) {
         response.status(400);
-        return new ErrorResponse("The supplied id '%s' is invalid", request.params("id"));
+        return new ErrorResponse("The supplied id '%s' is invalid", request.params(":id"));
     }
 
     public static ErrorResponse createInvalidParameterError(Response response, String parameter, String value) {

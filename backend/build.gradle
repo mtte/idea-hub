@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'org.pac4j', name: 'pac4j-jwt', version: '3.8.3'
     implementation group: 'org.pac4j', name: 'pac4j-http', version: '3.8.3'
     implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+    implementation group: 'com.j256.two-factor-auth', name: 'two-factor-auth', version: '1.0'
 
     // DB
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.1'

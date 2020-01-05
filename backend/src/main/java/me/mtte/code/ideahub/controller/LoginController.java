@@ -1,5 +1,6 @@
 package me.mtte.code.ideahub.controller;
 
+import com.j256.twofactorauth.TimeBasedOneTimePasswordUtil;
 import me.mtte.code.ideahub.auth.Password;
 import me.mtte.code.ideahub.model.User;
 import me.mtte.code.ideahub.responses.LoginResponse;
@@ -33,6 +34,7 @@ public class LoginController {
     public Object handleLogin(Request request, Response response) {
         String username = getParameter(request, "username");
         String password = getParameter(request, "password");
+        String twoFactorAuth = getParameter(request, "2fa");
 
         // Validation
         var usernameValidation = new Validation<>(username, nonNull().and(notEmpty()));
@@ -43,11 +45,11 @@ public class LoginController {
         var passwordValidation = new Validation<>(password, nonNull().and(notEmpty()));
         if (passwordValidation.failed()) {
             return ResponseFactory.createInvalidParameterError(response, "password", "*****",
-                    password);
+                    passwordValidation);
         }
 
         // Authenticate
-        Optional<User> user = authenticate(username, password);
+        Optional<User> user = authenticate(username, password, twoFactorAuth);
         if (user.isEmpty()) {
             halt(401, "Login credentials invalid");
         }
@@ -58,14 +60,26 @@ public class LoginController {
         return new LoginResponse(token, user.get().getUsername(), user.get().getRole());
     }
 
-    private Optional<User> authenticate(String username, String password) {
-        if (username.isEmpty() || password.isEmpty()) {
+    private Optional<User> authenticate(String username, String password, String twoFactorAuth) {
+        // Factor 1
+        Optional<User> user = this.userService.getByUsernameWithPassword(username);
+        user = user.filter(u -> Password.verifyPassword(password.toCharArray(), u.getPassword().toCharArray()));
+        if (user.isEmpty() || user.get().getTwoFactorAuthSecret() == null) {
+            return user;
+        }
+
+        // Factor 2
+        try {
+            var currentNumber = TimeBasedOneTimePasswordUtil.generateCurrentNumberString(user.get().getTwoFactorAuthSecret());
+            if (!currentNumber.equals(twoFactorAuth)) {
+                return Optional.empty();
+            }
+
+        } catch (Exception e) {
             return Optional.empty();
         }
 
-        Optional<User> user = this.userService.getByUsernameWithPassword(username);
-
-        return user.filter(u -> Password.verifyPassword(password.toCharArray(), u.getPassword().toCharArray()));
+        return user;
     }
 
     private CommonProfile createProfile(User user) {

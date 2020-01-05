@@ -33,6 +33,7 @@ public class UserService extends AbstractService {
         }
         var user = new User(userRecord);
         user.setPassword(userRecord.getPassword());
+        user.setTwoFactorAuthSecret(userRecord.getTwoFactorAuth());
         return Optional.of(user);
     }
 
@@ -79,6 +80,29 @@ public class UserService extends AbstractService {
 
     public boolean isUsernameUnique(String username) {
         return getDb().fetchCount(USER, USER.NAME.eq(username)) == 0;
+    }
+
+    public boolean enableTwoFactorAuth(int userId, String secret) {
+        var user = getDb().fetchOne(USER, USER.ID.eq(userId));
+        if (user == null) {
+            return false;
+        }
+        user.setTwoFactorAuth(secret);
+        return user.store() != 0;
+    }
+
+    public boolean disableTwoFactroAuth(int userId) {
+        var user = getDb().fetchOne(USER, USER.ID.eq(userId));
+        if (user == null) {
+            return false;
+        }
+        user.setTwoFactorAuth(null);
+        return user.store() != 0;
+    }
+
+    public boolean isTwoFactorAuthEnabled(int userId) {
+        var user = getDb().fetchOne(USER, USER.ID.eq(userId));
+        return  user == null || user.getTwoFactorAuth() == null;
     }
 
 }
