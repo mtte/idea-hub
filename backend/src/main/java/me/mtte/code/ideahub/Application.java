@@ -1,13 +1,12 @@
 package me.mtte.code.ideahub;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import me.mtte.code.ideahub.auth.SecurityConfigFactory;
 import me.mtte.code.ideahub.database.Database;
 import me.mtte.code.ideahub.database.PostgresDatabase;
-import me.mtte.code.ideahub.util.JsonUtil;
 import org.pac4j.core.config.Config;
 
 import static spark.Spark.*;
@@ -20,7 +19,7 @@ public class Application {
     public static void main(String[] args) {
         setupDatabase();
         setupSecurityConfig();
-        setupApi();
+        setupSpark();
     }
 
     private static void setupDatabase() {
@@ -31,9 +30,10 @@ public class Application {
         securityConfig = new SecurityConfigFactory(System.getenv("JWT_SALT")).build();
     }
 
-    private static void setupApi() {
+    private static void setupSpark() {
         removeTrailingSlashes();
 
+        // TODO: Get from configuration
         enableCORS("*", "*", "*");
 
         handleJsonPayload();
@@ -80,12 +80,19 @@ public class Application {
     private static void handleJsonPayload() {
         before((request, response) -> {
             String body = request.body();
-            var payload = JsonParser.parseString(body).getAsJsonObject();
-            for (String key : payload.keySet()) {
-                JsonElement jsonElement = payload.get(key);
-                if (jsonElement instanceof JsonPrimitive) {
-                    request.attribute(key, jsonElement.getAsString());
+            try {
+                var parsed = JsonParser.parseString(body);
+                if (parsed.isJsonObject()) {
+                    var payload = parsed.getAsJsonObject();
+                    for (String key : payload.keySet()) {
+                        JsonElement jsonElement = payload.get(key);
+                        if (jsonElement instanceof JsonPrimitive) {
+                            request.attribute(key, jsonElement.getAsString());
+                        }
+                    }
                 }
+            } catch (JsonParseException e) {
+                // Ignore, probably not a json payload
             }
         });
     }
