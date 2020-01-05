@@ -103,20 +103,23 @@ public class NoteController implements RouteGroup {
             return ResponseFactory.createInvalidParameterError(response, "content", content, contentValidation);
         }
 
-        String shared = getParameter(request, "shared");
-        var sharedValidation = new Validation<>(shared, nonNull().and(isBoolean()));
-        if (sharedValidation.failed()) {
-            return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+        boolean isShared = false;
+        if (hasAuthorPermissions(request, response)) {
+            String shared = getParameter(request, "shared");
+            var sharedValidation = new Validation<>(shared, nonNull().and(isBoolean()));
+            if (sharedValidation.failed()) {
+                return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+            }
+            isShared = Boolean.parseBoolean(shared);
         }
 
-        return this.noteService.createNote(id, title, content, Boolean.getBoolean(shared));
+        return this.noteService.createNote(id, title, content, isShared);
     }
 
 
     private Object updateNote(Request request, Response response) {
         String title = getParameter(request, "title");
         String content = getParameter(request, "content");
-        String shared = getParameter(request, "shared");
 
         if (title != null) {
             var titleValidation = new Validation<>(title, minLength(5).and(maxLength(100)));
@@ -132,13 +135,17 @@ public class NoteController implements RouteGroup {
             }
         }
 
-        if (shared != null) {
-            var sharedValidation = new Validation<>(shared, isBoolean());
-            if (sharedValidation.failed()) {
-                return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+        Boolean isShared = null;
+        if (hasAuthorPermissions(request, response)) {
+            String shared = getParameter(request, "shared");
+            if (shared != null) {
+                var sharedValidation = new Validation<>(shared, isBoolean());
+                if (sharedValidation.failed()) {
+                    return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+                }
+                isShared = Boolean.parseBoolean(shared);;
             }
         }
-        Boolean isShared = shared == null ? null : Boolean.getBoolean(shared);
 
         return this.noteService.updateNote(getRequestId(request), title, content, isShared);
     }

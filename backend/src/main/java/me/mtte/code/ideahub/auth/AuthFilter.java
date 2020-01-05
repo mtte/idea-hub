@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * The auth filter authenticates the user and checks if he is authroized.
  *
@@ -13,8 +16,10 @@ import spark.Response;
  */
 public class AuthFilter extends SecurityFilter {
 
-    public AuthFilter(Config config, Role role) {
-        super(config, "HeaderClient", role.toString());
+    public AuthFilter(Config config, Role... roles) {
+        super(config, "HeaderClient", Arrays.stream(roles)
+                .map(Role::toString)
+                .collect(Collectors.joining(",")));
     }
 
     @Override
