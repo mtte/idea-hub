@@ -58,8 +58,8 @@ export default {
 
   data () {
     return {
-      username: 'admin',
-      password: 'pass4dev',
+      username: '',
+      password: '',
       twoFA: '',
 
       loading: false,
