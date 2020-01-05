@@ -4,6 +4,7 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.NoteService;
+import me.mtte.code.ideahub.util.SparkUtil;
 import me.mtte.code.ideahub.validation.Validation;
 import spark.Request;
 import spark.Response;
@@ -44,8 +45,10 @@ public class NoteController implements RouteGroup {
     private Object getNote(Request request, Response response) {
         var id = getRequestId(request);
 
-        if (id != null) {
-            var note = this.noteService.getNote(id);
+        var userId = getUserId(request, response);
+
+        if (id != null && userId != null) {
+            var note = this.noteService.getNote(id, userId);
             if (note.isPresent()) {
                 return note.get();
             }
@@ -67,12 +70,13 @@ public class NoteController implements RouteGroup {
 
     private Object deleteNote(Request request, Response response) {
         var id = getRequestId(request);
+        var userId = getUserId(request, response);
 
-        if (id == null) {
+        if (id == null || userId == null) {
             return ResponseFactory.createInvalidIdError(request, response);
         }
 
-        if (!this.noteService.deleteNote(id)) {
+        if (!this.noteService.deleteNote(id, userId)) {
             response.status(500);
             return new ErrorResponse("Error while deleting note with id %d", id);
         }
@@ -144,7 +148,8 @@ public class NoteController implements RouteGroup {
             }
         }
 
-        var updated = this.noteService.updateNote(getRequestId(request), title, content, isShared);
+        var userId = getUserId(request, response);
+        var updated = this.noteService.updateNote(getRequestId(request), userId, title, content, isShared);
         if (updated == null) {
             return ResponseFactory.createInvalidIdError(request, response);
         }
