@@ -38,7 +38,7 @@ public class Application {
         removeTrailingSlashes();
 
         // TODO: Get from configuration
-        enableCORS("*", "GET, POST, PUT, DELETE, OPTIONS", "X-Requested-With, Content-Type, Accept, Origin, Authorization");
+        enableCORS(System.getenv("CORS_ALLOWED_ORIGINS"), System.getenv("CORS_ALLOWED_METHODS"), System.getenv("CORS_ALLOWED_HEADERS"));
 
         handleJsonPayload();
 
