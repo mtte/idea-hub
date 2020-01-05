@@ -37,7 +37,6 @@ public class Application {
 
         removeTrailingSlashes();
 
-        // TODO: Get from configuration
         enableCORS(System.getenv("CORS_ALLOWED_ORIGINS"), System.getenv("CORS_ALLOWED_METHODS"), System.getenv("CORS_ALLOWED_HEADERS"));
 
         handleJsonPayload();
@@ -61,6 +60,10 @@ public class Application {
 
     private static void enableCORS(final String origin, final String methods, final String headers) {
         options("/*", (request, response) -> {
+            String accessControlAlllowOrigin = request.headers("Access-Control-Allow-Origin");
+            if (accessControlAlllowOrigin != null) {
+                response.header("Access-Control-Allow-Origin", accessControlAlllowOrigin);
+            }
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
             if (accessControlRequestHeaders != null) {
                 response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
