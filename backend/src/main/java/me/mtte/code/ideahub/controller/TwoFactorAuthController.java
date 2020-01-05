@@ -9,6 +9,7 @@ import spark.Request;
 import spark.Response;
 import spark.RouteGroup;
 
+import static me.mtte.code.ideahub.util.JsonUtil.json;
 import static spark.Spark.*;
 
 
@@ -23,13 +24,13 @@ public class TwoFactorAuthController implements RouteGroup {
     @Override
     public void addRoutes() {
         // Enable
-        post("",  this::enableTwoFactorAuthentication);
+        post("",  this::enableTwoFactorAuthentication, json());
 
         // Disable
-        delete("", this::disableTwoFactorAuthentication);
+        delete("", this::disableTwoFactorAuthentication, json());
 
         // Check
-        get("", this::checkIfTwoFactorAuthenticationIsEnabled);
+        get("", this::checkIfTwoFactorAuthenticationIsEnabled, json());
     }
 
     private Object enableTwoFactorAuthentication(Request request, Response response) {
