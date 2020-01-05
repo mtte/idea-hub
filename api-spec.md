@@ -82,3 +82,23 @@ Optional parameters: **title, content, shared**
 DELETE /api/notes/{id}
 ```
 
+### Two Factor Authentication
+
+#### Enable
+
+```http
+POST /api/2fa
+```
+
+#### Disable
+
+```http
+DELETE /api/2fa
+```
+
+#### Check if enabled
+
+```http
+GET /api/2fa
+```
+
