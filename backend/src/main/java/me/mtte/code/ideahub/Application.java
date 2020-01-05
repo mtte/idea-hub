@@ -7,6 +7,8 @@ import com.google.gson.JsonPrimitive;
 import me.mtte.code.ideahub.auth.SecurityConfigFactory;
 import me.mtte.code.ideahub.database.Database;
 import me.mtte.code.ideahub.database.PostgresDatabase;
+import me.mtte.code.ideahub.responses.ErrorResponse;
+import me.mtte.code.ideahub.util.JsonUtil;
 import org.pac4j.core.config.Config;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,12 @@ public class Application {
                 System.getenv("CORS_ALLOWED_HEADERS"), System.getenv("CORS_ALLOW_CREDENTIALS"));
 
         handleJsonPayload();
+
+        logExceptions();
+
+        get("/test", (request, response) -> {
+            throw new IllegalStateException("dasf");
+        });
 
         path("/api", new Api(database, securityConfig));
 
@@ -96,6 +104,14 @@ public class Application {
             } catch (JsonParseException e) {
                 // Ignore, probably not a json payload
             }
+        });
+    }
+
+    private static void logExceptions() {
+        exception(Exception.class, (exception, request, response) -> {
+            LoggerFactory.getLogger(Application.class).error("Spark request caused exception", exception);
+            response.status(500);
+            response.body(JsonUtil.toJson(new ErrorResponse("Internal server error")));
         });
     }
 
