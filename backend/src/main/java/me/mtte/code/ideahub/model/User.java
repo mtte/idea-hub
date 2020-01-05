@@ -2,6 +2,7 @@ package me.mtte.code.ideahub.model;
 
 import me.mtte.code.ideahub.auth.Role;
 import me.mtte.code.ideahub.database.ideahub.tables.records.UserRecord;
+import org.pac4j.core.profile.CommonProfile;
 
 public class User {
 

@@ -14,8 +14,8 @@ import spark.Response;
 import spark.RouteGroup;
 
 import static me.mtte.code.ideahub.util.JsonUtil.json;
-import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
-import static me.mtte.code.ideahub.util.ParameterUtil.getRequestId;
+import static me.mtte.code.ideahub.util.SparkUtil.getParameter;
+import static me.mtte.code.ideahub.util.SparkUtil.getRequestId;
 import static me.mtte.code.ideahub.validation.StandardValidators.*;
 import static spark.Spark.*;
 

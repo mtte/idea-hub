@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
-import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
+import static me.mtte.code.ideahub.util.SparkUtil.getParameter;
 import static me.mtte.code.ideahub.validation.StandardValidators.*;
 import static spark.Spark.halt;
 

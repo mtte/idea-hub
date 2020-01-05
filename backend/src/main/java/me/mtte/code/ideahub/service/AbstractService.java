@@ -3,7 +3,7 @@ package me.mtte.code.ideahub.service;
 import me.mtte.code.ideahub.database.Database;
 import org.jooq.DSLContext;
 
-public class AbstractService implements Service {
+public abstract class AbstractService implements Service {
 
     private final Database database;
 
