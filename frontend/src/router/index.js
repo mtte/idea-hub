@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login'
 import UserOverview from '../views/user/Overview'
+import NoteCrud from '../views/note/Crud'
+import NotFound from '../views/404'
+import Forbidden from '../views/403'
 
 Vue.use(VueRouter)
 
@@ -21,6 +24,21 @@ const routes = [
     path: '/userOverview',
     name: 'userOverview',
     component: UserOverview
+  },
+  {
+    path: '/note/:id',
+    name: 'noteCrud',
+    component: NoteCrud
+  },
+  {
+    path: '/403',
+    name: 'Forbidden',
+    component: Forbidden
+  },
+  {
+    path: '*',
+    name: 'NotFound',
+    component: NotFound
   }
 ]
 
@@ -31,8 +49,8 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['login']
-  const authorPages = ['']
+  const publicPages = ['login', 'NotFound', 'Forbidden']
+  const authorPages = ['noteCrud']
   const adminPages = ['userOverview']
   const user = JSON.parse(localStorage.getItem('user'))
   const isLoggedIn = user !== null
@@ -40,9 +58,6 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.name)
   const authorRequired = authorPages.includes(to.name)
   const adminRequired = adminPages.includes(to.name)
-
-  // eslint-disable-next-line no-debugger
-  // debugger
 
   if (authRequired && !isLoggedIn) {
     next('/login')
@@ -53,12 +68,12 @@ router.beforeEach((to, from, next) => {
     const isAuthor = user.role === 'AUTHOR'
     const isAdmin = user.role === 'ADMIN'
 
-    if (authorRequired && (!isAuthor || !isAdmin)) {
-      return next(from)
+    if (authorRequired && !(isAuthor || isAdmin)) {
+      return next('/403')
     }
 
     if (adminRequired && !isAdmin) {
-      return next(from)
+      return next('/403')
     }
   }
 
