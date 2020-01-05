@@ -8,6 +8,7 @@ import me.mtte.code.ideahub.auth.SecurityConfigFactory;
 import me.mtte.code.ideahub.database.Database;
 import me.mtte.code.ideahub.database.PostgresDatabase;
 import org.pac4j.core.config.Config;
+import org.slf4j.LoggerFactory;
 
 import static spark.Spark.*;
 
@@ -31,6 +32,9 @@ public class Application {
     }
 
     private static void setupSpark() {
+        before((request, response) -> LoggerFactory.getLogger(Application.class).info("[{}] headers received: {}",
+                request.pathInfo(), String.join(", ", request.headers())));
+
         removeTrailingSlashes();
 
         // TODO: Get from configuration
