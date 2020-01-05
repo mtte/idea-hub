@@ -2,15 +2,16 @@ package me.mtte.code.ideahub.controller;
 
 import me.mtte.code.ideahub.auth.Password;
 import me.mtte.code.ideahub.auth.Role;
-import me.mtte.code.ideahub.service.UserService;
 import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
+import me.mtte.code.ideahub.service.UserService;
 import spark.Request;
 import spark.Response;
 import spark.RouteGroup;
 
 import static me.mtte.code.ideahub.util.JsonUtil.json;
+import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
 import static me.mtte.code.ideahub.util.ParameterUtil.getRequestId;
 import static spark.Spark.*;
 
@@ -42,9 +43,9 @@ public class UserController implements RouteGroup {
     }
 
     private Object createUser(Request request, Response response) {
-        var username = request.queryParams("username");
-        var password = request.queryParams("password");
-        var role = request.queryParams("role");
+        String username = getParameter(request, "username");
+        String password = getParameter(request, "password");
+        String role = getParameter(request, "role");
 
         if (!Role.validRole(role)) {
             return ResponseFactory.createInvalidParameterError(response, "role", role,
@@ -82,8 +83,8 @@ public class UserController implements RouteGroup {
     }
 
     private Object updateUser(Request request, Response response) {
-        String username = request.queryParams("username");
-        String role = request.queryParams("role");
+        String username = getParameter(request, "username");
+        String role = getParameter(request, "role");
 
         if (username == null || !this.userService.isUsernameUnique(username)) {
             return ResponseFactory.createInvalidParameterError(response, "username", username);

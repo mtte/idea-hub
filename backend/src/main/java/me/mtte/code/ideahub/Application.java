@@ -1,8 +1,13 @@
 package me.mtte.code.ideahub;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import me.mtte.code.ideahub.auth.SecurityConfigFactory;
 import me.mtte.code.ideahub.database.Database;
 import me.mtte.code.ideahub.database.PostgresDatabase;
+import me.mtte.code.ideahub.util.JsonUtil;
 import org.pac4j.core.config.Config;
 
 import static spark.Spark.*;
@@ -27,15 +32,11 @@ public class Application {
     }
 
     private static void setupApi() {
-        before((request, response) -> {
-            // Remove trailing slashes of requests
-            String path = request.pathInfo();
-            if (path.endsWith("/")) {
-                response.redirect(path.substring(0, path.length() - 1));
-            }
-        });
+        removeTrailingSlashes();
 
         enableCORS("*", "*", "*");
+
+        handleJsonPayload();
 
         path("/api", new Api(database, securityConfig));
 
@@ -45,10 +46,17 @@ public class Application {
         });
     }
 
+    private static void removeTrailingSlashes() {
+        before((request, response) -> {
+            String path = request.pathInfo();
+            if (path.endsWith("/")) {
+                response.redirect(path.substring(0, path.length() - 1));
+            }
+        });
+    }
+
     private static void enableCORS(final String origin, final String methods, final String headers) {
-
         options("/*", (request, response) -> {
-
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
             if (accessControlRequestHeaders != null) {
                 response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
@@ -66,6 +74,19 @@ public class Application {
             response.header("Access-Control-Allow-Origin", origin);
             response.header("Access-Control-Request-Method", methods);
             response.header("Access-Control-Allow-Headers", headers);
+        });
+    }
+
+    private static void handleJsonPayload() {
+        before((request, response) -> {
+            String body = request.body();
+            var payload = JsonParser.parseString(body).getAsJsonObject();
+            for (String key : payload.keySet()) {
+                JsonElement jsonElement = payload.get(key);
+                if (jsonElement instanceof JsonPrimitive) {
+                    request.attribute(key, jsonElement.getAsString());
+                }
+            }
         });
     }
 

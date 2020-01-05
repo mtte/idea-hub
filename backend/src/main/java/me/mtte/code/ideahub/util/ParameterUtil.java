@@ -8,27 +8,40 @@ public class ParameterUtil {
         throw new IllegalStateException("Utility class");
     }
 
+    public static String getParameter(Request request, String parameter) {
+        var param = request.params(parameter);
+        if (param != null && !param.isEmpty()) {
+            return param;
+        }
+
+        var queryParam = request.queryParams(parameter);
+        if (queryParam != null && !queryParam.isEmpty()) {
+            return queryParam;
+        }
+
+        var attribute = request.attribute(parameter);
+        if (attribute instanceof String && !((String) attribute).isEmpty()) {
+            return (String) attribute;
+        }
+
+        return null;
+    }
+
+    public static Integer getParameterAsInt(Request request, String parameter) {
+        var value = getParameter(request, parameter);
+        return convertToInt(value);
+    }
+
     public static Integer convertToInt(String value) {
         try {
-            int id = Integer.parseInt(value);
-            return id;
+            return Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return null;
         }
     }
 
-    public static Integer getQueryParamAsInt(Request request, String param) {
-        String value = request.queryParams(param);
-        return convertToInt(value);
-    }
-
-    public static Integer getParamAsInt(Request request, String param) {
-        String value = request.params(param);
-        return convertToInt(value);
-    }
-
     public static Integer getRequestId(Request request) {
-       return getParamAsInt(request, ":id");
+       return getParameterAsInt(request, ":id");
     }
 
 }

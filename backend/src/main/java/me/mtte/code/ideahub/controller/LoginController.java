@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
+import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
 import static spark.Spark.halt;
 
 public class LoginController {
@@ -27,8 +28,8 @@ public class LoginController {
     }
 
     public LoginResponse handleLogin(Request request, Response response) {
-        String username = request.queryParams("username");
-        String password = request.queryParams("password");
+        String username = getParameter(request, "username");
+        String password = getParameter(request, "password");
 
         // TODO: validate input
 
