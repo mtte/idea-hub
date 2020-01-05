@@ -11,8 +11,8 @@ public abstract class AbstractService implements Service {
         this.database = database;
     }
 
-    @Override
-    public DSLContext getDb() {
+    protected DSLContext getDb() {
         return this.database.get();
     }
+
 }

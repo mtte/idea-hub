@@ -37,7 +37,8 @@ public class Application {
 
         removeTrailingSlashes();
 
-        enableCORS(System.getenv("CORS_ALLOWED_ORIGINS"), System.getenv("CORS_ALLOWED_METHODS"), System.getenv("CORS_ALLOWED_HEADERS"));
+        enableCORS(System.getenv("CORS_ALLOWED_ORIGINS"), System.getenv("CORS_ALLOWED_METHODS"),
+                System.getenv("CORS_ALLOWED_HEADERS"), System.getenv("CORS_ALLOW_CREDENTIALS"));
 
         handleJsonPayload();
 
@@ -58,12 +59,8 @@ public class Application {
         });
     }
 
-    private static void enableCORS(final String origin, final String methods, final String headers) {
+    private static void enableCORS(final String origin, final String methods, final String headers, final String credentials) {
         options("/*", (request, response) -> {
-            String accessControlAlllowOrigin = request.headers("Access-Control-Allow-Origin");
-            if (accessControlAlllowOrigin != null) {
-                response.header("Access-Control-Allow-Origin", accessControlAlllowOrigin);
-            }
             String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
             if (accessControlRequestHeaders != null) {
                 response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
@@ -81,6 +78,7 @@ public class Application {
             response.header("Access-Control-Allow-Origin", origin);
             response.header("Access-Control-Request-Method", methods);
             response.header("Access-Control-Allow-Headers", headers);
+            response.header("Access-Control-Allow-Credentials", credentials);
         });
     }
 

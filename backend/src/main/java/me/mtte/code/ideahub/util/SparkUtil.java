@@ -17,11 +17,14 @@ public class SparkUtil {
         throw new IllegalStateException("Utility class");
     }
 
-    public Optional<User> getUser(Request request, Response response, UserService userService) {
-        WebContext context = new SparkWebContext(request, response);
-        ProfileManager<CommonProfile> manager = new ProfileManager<>(context);
-        Optional<CommonProfile> profile = manager.get(false);
-        if (!profile.isPresent()) {
+    public static Integer getUserId(Request request, Response response) {
+        var profile = getProfile(request, response);
+        return profile.map(commonProfile -> convertToInt(commonProfile.getId())).orElse(null);
+    }
+
+    public static Optional<User> getUser(Request request, Response response, UserService userService) {
+        Optional<CommonProfile> profile = getProfile(request, response);
+        if (profile.isEmpty()) {
             return Optional.empty();
         }
         CommonProfile theProfile = profile.get();
@@ -30,6 +33,12 @@ public class SparkUtil {
             return Optional.empty();
         }
         return userService.getUser(id);
+    }
+
+    private static Optional<CommonProfile> getProfile(Request request, Response response) {
+        WebContext context = new SparkWebContext(request, response);
+        ProfileManager<CommonProfile> manager = new ProfileManager<>(context);
+        return manager.get(false);
     }
 
     public static String getParameter(Request request, String parameter) {

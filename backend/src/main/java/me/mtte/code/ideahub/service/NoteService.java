@@ -51,7 +51,7 @@ public class NoteService extends AbstractService {
         return new Note(noteRecord);
     }
 
-    public Note updateNote(int id, String title, String content, boolean shared)  {
+    public Note updateNote(int id, String title, String content, Boolean shared)  {
         NoteRecord noteRecord = getDb().fetchOne(NOTE, NOTE.ID.eq(id));
 
         if (noteRecord == null) {
@@ -64,7 +64,9 @@ public class NoteService extends AbstractService {
         if (content != null) {
             noteRecord.setContent(content);
         }
-        noteRecord.setShared(shared);
+        if (shared != null) {
+            noteRecord.setShared(shared);
+        }
 
         noteRecord.store();
 

@@ -30,4 +30,9 @@ public class StandardValidators {
         };
     }
 
+    public static Validator<String> isBoolean() {
+        return new BooleanValidator<>(value -> value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"),
+                "Not a boolean (true/false)");
+    }
+
 }
