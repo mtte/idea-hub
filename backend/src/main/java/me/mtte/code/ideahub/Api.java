@@ -34,7 +34,7 @@ public class Api implements RouteGroup {
         NoteService noteService = new NoteService(database);
         this.loginController = new LoginController(userService);
         this.userController = new UserController(userService);
-        this.noteController = new NoteController(noteService, userService);
+        this.noteController = new NoteController(noteService);
     }
 
     @Override

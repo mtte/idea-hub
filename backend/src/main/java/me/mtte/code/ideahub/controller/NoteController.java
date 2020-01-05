@@ -4,7 +4,6 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.NoteService;
-import me.mtte.code.ideahub.service.UserService;
 import me.mtte.code.ideahub.validation.Validation;
 import spark.Request;
 import spark.Response;
@@ -18,11 +17,9 @@ import static spark.Spark.*;
 public class NoteController implements RouteGroup {
 
     private final NoteService noteService;
-    private final UserService userService;
 
-    public NoteController(NoteService noteService, UserService userService) {
+    public NoteController(NoteService noteService) {
         this.noteService = noteService;
-        this.userService = userService;
     }
 
     @Override
