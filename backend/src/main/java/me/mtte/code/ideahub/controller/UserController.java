@@ -6,6 +6,7 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.UserService;
+import me.mtte.code.ideahub.validation.Validation;
 import spark.Request;
 import spark.Response;
 import spark.RouteGroup;
@@ -47,6 +48,15 @@ public class UserController implements RouteGroup {
         String password = getParameter(request, "password");
         String role = getParameter(request, "role");
 
+        // Parameter validation
+        var validation = new Validation()
+                .validateUsername(username)
+                .validatePassword(password)
+                .validateRole(role);
+        if (validation.failed()) {
+            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
+        }
+
         if (!Role.validRole(role)) {
             return ResponseFactory.createInvalidParameterError(response, "role", role,
                     "Role does not exist");
@@ -86,11 +96,20 @@ public class UserController implements RouteGroup {
         String username = getParameter(request, "username");
         String role = getParameter(request, "role");
 
-        if (username == null || !this.userService.isUsernameUnique(username)) {
+
+        // Parameter validation
+        var validation = new Validation()
+                .validateUsername(username)
+                .validateRole(role);
+        if (validation.failed()) {
+            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
+        }
+
+        if (!this.userService.isUsernameUnique(username)) {
             return ResponseFactory.createInvalidParameterError(response, "username", username);
         }
 
-        if (role == null || !Role.validRole(role)) {
+        if (!Role.validRole(role)) {
             return ResponseFactory.createInvalidParameterError(response, "role", role);
         }
 

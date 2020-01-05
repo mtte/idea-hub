@@ -1,5 +1,6 @@
 package me.mtte.code.ideahub.validation;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -8,25 +9,51 @@ import java.util.regex.Pattern;
  */
 public class Validation {
 
-    public static final Pattern LOWER_CASE_PATTERN = Pattern.compile("[a-z]");
-    public static final Pattern UPPER_CASE_PATTERN = Pattern.compile("[A-Z]");
-    public static final Pattern DIGIT_PATTERN = Pattern.compile("[0-9]");
-    public static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^a-zA-Z0-9]*");
+    private static final Pattern LOWER_CASE_PATTERN = Pattern.compile("[a-z]");
+    private static final Pattern UPPER_CASE_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern DIGIT_PATTERN = Pattern.compile("[0-9]");
+    private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^a-zA-Z0-9]*");
 
-    public Validation() {
-        throw new IllegalStateException("Utility class");
+    private final ValidationResult result = new ValidationResult();
+
+    public boolean failed() {
+        return this.result.failed();
     }
 
-    public static ValidationResult validateUsername(String username) {
-        return new ValidationResult()
+    public boolean succeeded() {
+        return this.result.succeeded();
+    }
+
+    public ValidationResult getResult() {
+        return this.result;
+    }
+
+    public Validation validateUsername(String username) {
+        result.validate(nonNull(username))
                 .validate(maxLength(50, username));
+        return this;
     }
 
-    public static ValidationResult validatePassword(String password) {
-        return new ValidationResult()
+    public Validation validatePassword(String password) {
+        result.validate(nonNull(password))
                 .validate(minLength(12, password))
                 .validate(maxLength(50, password))
                 .validate(passwordDiversity(password));
+        return this;
+    }
+
+    public Validation validateRole(String role) {
+        result.validate(nonNull(role))
+                .validate(notEmpty(role));
+        return this;
+    }
+
+    private static Validator nonNull(final Object nonNullObject) {
+        return () -> nonNullObject != null ? Optional.empty() : Optional.of(new ValidationError("Object cannot be null"));
+    }
+
+    private static Validator notEmpty(final String value) {
+        return () -> value.isEmpty() ? Optional.of(new ValidationError("Value cannot be empty")) : Optional.empty();
     }
 
     private static Validator maxLength(final int maxLength, final String value) {
@@ -65,7 +92,7 @@ public class Validation {
             }
 
             if (categoriesMet < 3) {
-                return Optional.of(new ValidationError("Password has to contain at least 3 categories: " +
+                return Optional.of(new ValidationError("Password has to meet at least 3 of the following categories: " +
                         "lower case, upper case, numbers, special characters"));
             }
 

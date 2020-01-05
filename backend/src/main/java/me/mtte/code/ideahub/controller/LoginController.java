@@ -3,7 +3,9 @@ package me.mtte.code.ideahub.controller;
 import me.mtte.code.ideahub.auth.Password;
 import me.mtte.code.ideahub.model.User;
 import me.mtte.code.ideahub.responses.LoginResponse;
+import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.service.UserService;
+import me.mtte.code.ideahub.validation.Validation;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
@@ -27,18 +29,25 @@ public class LoginController {
         this.userService = userService;
     }
 
-    public LoginResponse handleLogin(Request request, Response response) {
+    public Object handleLogin(Request request, Response response) {
         String username = getParameter(request, "username");
         String password = getParameter(request, "password");
 
-        // TODO: validate input
+        // Validation
+        var validation = new Validation()
+                .validatePassword(password)
+                .validateUsername(username);
+        if (validation.failed()) {
+            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
+        }
 
+        // Authenticate
         Optional<User> user = authenticate(username, password);
-
         if (user.isEmpty()) {
             halt(401, "Login credentials invalid");
         }
 
+        // Create profile and token and respond
         CommonProfile profile = createProfile(user.get());
         String token = generateJwtToken(profile);
         return new LoginResponse(token, user.get().getUsername(), user.get().getRole());

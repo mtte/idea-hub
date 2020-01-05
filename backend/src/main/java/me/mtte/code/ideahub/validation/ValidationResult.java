@@ -8,7 +8,9 @@ public class ValidationResult {
     private final List<ValidationError> errors = new ArrayList<>();
 
     ValidationResult validate(Validator v) {
-        v.validate().ifPresent(this::addError);
+        if (errors.isEmpty()) {
+            v.validate().ifPresent(this::addError);
+        }
         return this;
     }
 
