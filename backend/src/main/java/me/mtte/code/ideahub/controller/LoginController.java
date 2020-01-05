@@ -73,7 +73,6 @@ public class LoginController {
 
         profile.setId(String.valueOf(user.getId()));
         profile.setClientName(user.getUsername());
-        profile.setRemembered(true);
         profile.setRoles(Set.of(user.getRole().toString()));
 
         return profile;

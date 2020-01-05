@@ -95,14 +95,18 @@ public class UserController implements RouteGroup {
         String username = getParameter(request, "username");
         String role = getParameter(request, "role");
 
-        var roleValidation = roleValidation(role);
-        if (roleValidation.failed()) {
-            return ResponseFactory.createInvalidParameterError(response, "role", role, roleValidation);
+        if (role != null) {
+            var roleValidation = roleValidation(role);
+            if (roleValidation.failed()) {
+                return ResponseFactory.createInvalidParameterError(response, "role", role, roleValidation);
+            }
         }
 
-        var usernameValidation = usernameValidation(username);
-        if (usernameValidation.failed()) {
-            return ResponseFactory.createInvalidParameterError(response, "username", username, usernameValidation);
+        if (username != null) {
+            var usernameValidation = usernameValidation(username);
+            if (usernameValidation.failed()) {
+                return ResponseFactory.createInvalidParameterError(response, "username", username, usernameValidation);
+            }
         }
 
         var user = this.userService.updateUser(getRequestId(request), username, role);
