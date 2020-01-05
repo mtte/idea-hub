@@ -102,7 +102,7 @@ public class UserService extends AbstractService {
 
     public boolean isTwoFactorAuthEnabled(int userId) {
         var user = getDb().fetchOne(USER, USER.ID.eq(userId));
-        return  user == null || user.getTwoFactorAuth() == null;
+        return  user != null && user.getTwoFactorAuth() != null;
     }
 
 }
