@@ -3,7 +3,7 @@
     light
   >
     <v-card-title class="headline">
-      {{ note.title }}
+      {{ note.id }} - {{ note.title }}
     </v-card-title>
 
     <v-card-subtitle>

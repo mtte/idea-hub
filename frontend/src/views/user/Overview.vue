@@ -24,6 +24,7 @@ export default {
     return {
       search: '',
       headers: [
+        { text: 'ID', value: 'id' },
         { text: 'Benutzername', value: 'username' },
         { text: 'Rolle', value: 'role' }
       ],
