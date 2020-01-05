@@ -108,10 +108,17 @@ export default {
             'content': this.note.content,
             'shared': this.note.isShared
           }
-          this.axios.post('/notes', payload).then(response => {
-            this.snackbarText = 'Erfolgreich erstelllt'
-            this.snackbar = true
-          })
+          this.axios.post('/notes', payload)
+            .then(response => {
+              this.snackbarText = 'Erfolgreich erstelllt'
+              this.snackbar = true
+              this.note = {}
+              this.note.isShared = false
+              this.error = ''
+            })
+            .catch(() => {
+              this.error = 'Es ist etwas schiefgelaufen'
+            })
         }
         if (this.mode === 'edit') {
           const payload = {
@@ -119,10 +126,16 @@ export default {
             'content': this.note.content,
             'shared': this.note.isShared
           }
-          this.axios.put(`/notes/${this.note.id}`, payload).then(response => {
-            this.snackbarText = 'Erfolgreich gespeichert'
-            this.snackbar = true
-          })
+          this.axios.put(`/notes/${this.note.id}`, payload)
+            .then(response => {
+              this.error = ''
+              this.snackbarText = 'Erfolgreich gespeichert'
+              this.snackbar = true
+              this.note = response.data
+            })
+            .catch(() => {
+              this.error = 'Es ist etwas schiefgelaufen'
+            })
         }
       }
     }

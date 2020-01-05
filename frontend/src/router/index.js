@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login'
 import UserOverview from '../views/user/Overview'
+import UserCrud from '../views/user/Crud'
 import NoteCrud from '../views/note/Crud'
 import NotFound from '../views/404'
 import Forbidden from '../views/403'
@@ -24,6 +25,11 @@ const routes = [
     path: '/userOverview',
     name: 'userOverview',
     component: UserOverview
+  },
+  {
+    path: '/user/:id',
+    name: 'userCrud',
+    component: UserCrud
   },
   {
     path: '/note/:id',
@@ -51,7 +57,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const publicPages = ['login', 'NotFound', 'Forbidden']
   const authorPages = ['noteCrud']
-  const adminPages = ['userOverview']
+  const adminPages = ['userOverview', 'userCrud']
   const user = JSON.parse(localStorage.getItem('user'))
   const isLoggedIn = user !== null
 
