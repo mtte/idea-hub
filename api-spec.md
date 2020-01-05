@@ -10,6 +10,8 @@ POST /api/login
 
 Required parameters: **username, password**
 
+Optional paramter: **2fa**
+
 ### Users
 
 #### List all Users
