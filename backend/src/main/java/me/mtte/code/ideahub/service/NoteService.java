@@ -19,12 +19,13 @@ public class NoteService extends AbstractService {
         super(database);
     }
 
-    public Optional<Note> getNote(int id) {
+    public Optional<Note> getNote(int id, int userId) {
         var note = getDb().select(NOTE.ID, USER.NAME, NOTE.TITLE, NOTE.CONTENT, NOTE.CREATED, NOTE.SHARED)
                 .from(NOTE)
                 .join(USER)
                 .on(NOTE.AUTHOR.eq(USER.ID))
                 .where(NOTE.ID.eq(id))
+                        .and(NOTE.AUTHOR.eq(userId).or(NOTE.SHARED.eq(true)))
                 .fetchOptional();
 
         return note.map(r -> new Note(r.value1(), r.value2(), r.value3(), r.value4(), r.value5(), r.value6()));
@@ -43,9 +44,10 @@ public class NoteService extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    public boolean deleteNote(int id) {
+    public boolean deleteNote(int id, int userId) {
         int deleted = getDb().delete(NOTE)
                 .where(NOTE.ID.eq(id))
+                        .and(NOTE.AUTHOR.eq(userId))
                 .execute();
         return deleted == 1;
     }
@@ -63,8 +65,8 @@ public class NoteService extends AbstractService {
         return new Note(noteRecord);
     }
 
-    public Note updateNote(int id, String title, String content, Boolean shared)  {
-        NoteRecord noteRecord = getDb().fetchOne(NOTE, NOTE.ID.eq(id));
+    public Note updateNote(int id, int userId, String title, String content, Boolean shared)  {
+        NoteRecord noteRecord = getDb().fetchOne(NOTE, NOTE.ID.eq(id), NOTE.AUTHOR.eq(userId));
 
         if (noteRecord == null) {
             return null;
