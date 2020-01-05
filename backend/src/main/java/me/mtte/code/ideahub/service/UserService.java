@@ -78,7 +78,6 @@ public class UserService extends AbstractService {
     }
 
     public boolean isUsernameUnique(String username) {
-        // TODO: transaction handling
         return getDb().fetchCount(USER, USER.NAME.eq(username)) == 0;
     }
 

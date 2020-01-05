@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
+import static me.mtte.code.ideahub.validation.StandardValidators.*;
 import static spark.Spark.halt;
 
 public class LoginController {
@@ -34,11 +35,17 @@ public class LoginController {
         String password = getParameter(request, "password");
 
         // Validation
-        var validation = new Validation()
-                .validatePassword(password)
-                .validateUsername(username);
-        if (validation.failed()) {
-            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
+        var usernameValidation = new Validation<>(username, nonNull()
+                .and(notEmpty()));
+        if (usernameValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "username", username,
+                    usernameValidation.getError().getMessage());
+        }
+        var passwordValidation = new Validation<>(password, nonNull()
+                .and(notEmpty()));
+        if (passwordValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "password", password,
+                    passwordValidation.getError().getMessage());
         }
 
         // Authenticate

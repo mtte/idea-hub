@@ -14,6 +14,7 @@ import spark.RouteGroup;
 import static me.mtte.code.ideahub.util.JsonUtil.json;
 import static me.mtte.code.ideahub.util.ParameterUtil.getParameter;
 import static me.mtte.code.ideahub.util.ParameterUtil.getRequestId;
+import static me.mtte.code.ideahub.validation.StandardValidators.*;
 import static spark.Spark.*;
 
 public class UserController implements RouteGroup {
@@ -48,14 +49,18 @@ public class UserController implements RouteGroup {
         String password = getParameter(request, "password");
         String role = getParameter(request, "role");
 
-        // Parameter validation
-        var validation = new Validation()
-                .validateUsername(username)
-                .validatePassword(password)
-                .validateRole(role);
-        if (validation.failed()) {
-            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
-        }
+        // TODO: VALIDATION
+//        var usernameValidation = new Validation<>(username, nonNull()
+//                .and(notEmpty()
+//                        .and(maxLength(50))));
+//
+//        var passwordValidation = new Validation<>(password, nonNull()
+//                .and(minLength(12)
+//                        .and(maxLength(50)
+//                                .and(passwordDiversity()))));
+//
+//        var roleValidation = new Validation<>(role, nonNull()
+//                .and(notEmpty()));
 
         if (!Role.validRole(role)) {
             return ResponseFactory.createInvalidParameterError(response, "role", role,
@@ -96,14 +101,7 @@ public class UserController implements RouteGroup {
         String username = getParameter(request, "username");
         String role = getParameter(request, "role");
 
-
-        // Parameter validation
-        var validation = new Validation()
-                .validateUsername(username)
-                .validateRole(role);
-        if (validation.failed()) {
-            return ResponseFactory.createValidationErrorResponse(response, validation.getResult());
-        }
+        // TODO Parameter validation
 
         if (!this.userService.isUsernameUnique(username)) {
             return ResponseFactory.createInvalidParameterError(response, "username", username);

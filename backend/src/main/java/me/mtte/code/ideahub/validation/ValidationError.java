@@ -12,11 +12,11 @@ public class ValidationError {
      * @param error The error message.
      * @param args Formatting arguments.
      */
-    public ValidationError(String error, Object... args) {
+    ValidationError(String error, Object... args) {
         this.error = String.format(error, args);
     }
 
-    public String getError() {
+    public String getMessage() {
         return error;
     }
 

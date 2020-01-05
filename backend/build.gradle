@@ -10,7 +10,7 @@ mainClassName = 'me.mtte.code.ideahub.Application'
 
 sourceCompatibility = 11
 
-sourceSets.main.java.srcDir '$buildDir/genereted-src/jooq'
+sourceSets.main.java.srcDir new File(buildDir, '/generated-src/jooq')
 
 repositories {
     mavenCentral()
@@ -63,7 +63,7 @@ jooq {
             }
             target {
                 packageName = 'me.mtte.code.ideahub.database'
-                directory = '$buildDir/generated-src/jooq'
+                directory = new File(buildDir, '/generated-src/jooq')
                 clean = true
             }
         }
