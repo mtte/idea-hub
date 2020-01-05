@@ -4,6 +4,7 @@
     <v-img
       v-if="twoFA.enabled && twoFA.url"
       :src="twoFA.url"
+      style="max-width: 300px"
     />
     <v-btn
       v-if="!twoFA.enabled"

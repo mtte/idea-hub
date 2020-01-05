@@ -19,7 +19,7 @@
       icon
       large
       style="margin-right: 70px"
-      to="/userOverview"
+      to="/user/overview"
     >
       <v-icon>mdi-account-supervisor</v-icon>
     </v-btn>

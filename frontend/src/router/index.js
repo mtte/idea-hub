@@ -28,7 +28,7 @@ const routes = [
     component: TwoFA
   },
   {
-    path: '/userOverview',
+    path: '/user/overview',
     name: 'userOverview',
     component: UserOverview
   },
