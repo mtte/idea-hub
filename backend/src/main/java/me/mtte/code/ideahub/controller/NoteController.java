@@ -4,7 +4,6 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.NoteService;
-import me.mtte.code.ideahub.service.UserService;
 import me.mtte.code.ideahub.validation.Validation;
 import spark.Request;
 import spark.Response;
@@ -18,11 +17,9 @@ import static spark.Spark.*;
 public class NoteController implements RouteGroup {
 
     private final NoteService noteService;
-    private final UserService userService;
 
-    public NoteController(NoteService noteService, UserService userService) {
+    public NoteController(NoteService noteService) {
         this.noteService = noteService;
-        this.userService = userService;
     }
 
     @Override
@@ -103,20 +100,23 @@ public class NoteController implements RouteGroup {
             return ResponseFactory.createInvalidParameterError(response, "content", content, contentValidation);
         }
 
-        String shared = getParameter(request, "shared");
-        var sharedValidation = new Validation<>(shared, nonNull().and(isBoolean()));
-        if (sharedValidation.failed()) {
-            return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+        boolean isShared = false;
+        if (hasAuthorPermissions(request, response)) {
+            String shared = getParameter(request, "shared");
+            var sharedValidation = new Validation<>(shared, nonNull().and(isBoolean()));
+            if (sharedValidation.failed()) {
+                return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+            }
+            isShared = Boolean.parseBoolean(shared);
         }
 
-        return this.noteService.createNote(id, title, content, Boolean.getBoolean(shared));
+        return this.noteService.createNote(id, title, content, isShared);
     }
 
 
     private Object updateNote(Request request, Response response) {
         String title = getParameter(request, "title");
         String content = getParameter(request, "content");
-        String shared = getParameter(request, "shared");
 
         if (title != null) {
             var titleValidation = new Validation<>(title, minLength(5).and(maxLength(100)));
@@ -132,15 +132,24 @@ public class NoteController implements RouteGroup {
             }
         }
 
-        if (shared != null) {
-            var sharedValidation = new Validation<>(shared, isBoolean());
-            if (sharedValidation.failed()) {
-                return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+        Boolean isShared = null;
+        if (hasAuthorPermissions(request, response)) {
+            String shared = getParameter(request, "shared");
+            if (shared != null) {
+                var sharedValidation = new Validation<>(shared, isBoolean());
+                if (sharedValidation.failed()) {
+                    return ResponseFactory.createInvalidParameterError(response, "shared", shared, sharedValidation);
+                }
+                isShared = Boolean.parseBoolean(shared);;
             }
         }
-        Boolean isShared = shared == null ? null : Boolean.getBoolean(shared);
 
-        return this.noteService.updateNote(getRequestId(request), title, content, isShared);
+        var updated = this.noteService.updateNote(getRequestId(request), title, content, isShared);
+        if (updated == null) {
+            return ResponseFactory.createInvalidIdError(request, response);
+        }
+
+        return updated;
     }
 
 }

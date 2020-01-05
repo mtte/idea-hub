@@ -19,8 +19,7 @@ import static spark.Spark.*;
  */
 public class Api implements RouteGroup {
 
-    private final AuthFilter userFilter;
-    private final AuthFilter authorFilter;
+    private final AuthFilter loggedInUser;
     private final AuthFilter adminFilter;
 
     private final LoginController loginController;
@@ -28,15 +27,14 @@ public class Api implements RouteGroup {
     private final NoteController noteController;
 
     public Api(Database database, Config securityConfig) {
-        this.userFilter = new AuthFilter(securityConfig, Role.USER);
-        this.authorFilter = new AuthFilter(securityConfig, Role.AUTHOR);
-        this.adminFilter = new AuthFilter(securityConfig,  Role.ADMIN);
+        this.loggedInUser = new AuthFilter(securityConfig);
+        this.adminFilter = new AuthFilter(securityConfig, Role.ADMIN);
 
         UserService userService = new UserService(database);
         NoteService noteService = new NoteService(database);
         this.loginController = new LoginController(userService);
         this.userController = new UserController(userService);
-        this.noteController = new NoteController(noteService, userService);
+        this.noteController = new NoteController(noteService);
     }
 
     @Override
@@ -47,8 +45,8 @@ public class Api implements RouteGroup {
         before("/users/*", this.adminFilter);
         path("/users", this.userController);
 
-        before("/notes", this.userFilter);
-        before("/notes/*", this.userFilter);
+        before("/notes", this.loggedInUser);
+        before("/notes/*", this.loggedInUser);
         path("/notes", this.noteController);
     }
 

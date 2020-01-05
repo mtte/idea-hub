@@ -32,9 +32,6 @@ public class Application {
     }
 
     private static void setupSpark() {
-        before((request, response) -> LoggerFactory.getLogger(Application.class).info("[{}] headers received: {}",
-                request.pathInfo(), String.join(", ", request.headers())));
-
         removeTrailingSlashes();
 
         enableCORS(System.getenv("CORS_ALLOWED_ORIGINS"), System.getenv("CORS_ALLOWED_METHODS"),
