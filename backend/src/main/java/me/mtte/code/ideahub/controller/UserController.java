@@ -6,6 +6,7 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.UserService;
+import me.mtte.code.ideahub.util.SparkUtil;
 import me.mtte.code.ideahub.validation.BooleanValidator;
 import me.mtte.code.ideahub.validation.PasswordDiversityValidator;
 import me.mtte.code.ideahub.validation.Validation;
@@ -102,7 +103,8 @@ public class UserController implements RouteGroup {
             }
         }
 
-        if (username != null) {
+        var currentUser = this.userService.getUser(getRequestId(request));
+        if (username != null && !(currentUser.isPresent() && username.equals(currentUser.get().getUsername()))) {
             var usernameValidation = usernameValidation(username);
             if (usernameValidation.failed()) {
                 return ResponseFactory.createInvalidParameterError(response, "username", username, usernameValidation);
