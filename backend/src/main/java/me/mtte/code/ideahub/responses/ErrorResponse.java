@@ -1,6 +1,6 @@
 package me.mtte.code.ideahub.responses;
 
-public class ErrorResponse {
+public class ErrorResponse implements Response {
 
     private final String message;
 

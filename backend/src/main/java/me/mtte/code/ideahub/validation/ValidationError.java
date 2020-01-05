@@ -12,7 +12,7 @@ public class ValidationError {
      * @param error The error message.
      * @param args Formatting arguments.
      */
-    ValidationError(String error, Object... args) {
+    public ValidationError(String error, Object... args) {
         this.error = String.format(error, args);
     }
 

@@ -2,7 +2,7 @@ package me.mtte.code.ideahub.responses;
 
 import me.mtte.code.ideahub.auth.Role;
 
-public class LoginResponse {
+public class LoginResponse implements Response {
 
     private final String token;
     private final String username;

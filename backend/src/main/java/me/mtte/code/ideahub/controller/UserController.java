@@ -6,6 +6,8 @@ import me.mtte.code.ideahub.responses.ErrorResponse;
 import me.mtte.code.ideahub.responses.ResponseFactory;
 import me.mtte.code.ideahub.responses.SuccessResponse;
 import me.mtte.code.ideahub.service.UserService;
+import me.mtte.code.ideahub.validation.BooleanValidator;
+import me.mtte.code.ideahub.validation.PasswordDiversityValidator;
 import me.mtte.code.ideahub.validation.Validation;
 import spark.Request;
 import spark.Response;
@@ -49,32 +51,24 @@ public class UserController implements RouteGroup {
         String password = getParameter(request, "password");
         String role = getParameter(request, "role");
 
-        // TODO: VALIDATION
-//        var usernameValidation = new Validation<>(username, nonNull()
-//                .and(notEmpty()
-//                        .and(maxLength(50))));
-//
-//        var passwordValidation = new Validation<>(password, nonNull()
-//                .and(minLength(12)
-//                        .and(maxLength(50)
-//                                .and(passwordDiversity()))));
-//
-//        var roleValidation = new Validation<>(role, nonNull()
-//                .and(notEmpty()));
-
-        if (!Role.validRole(role)) {
-            return ResponseFactory.createInvalidParameterError(response, "role", role,
-                    "Role does not exist");
+        var usernameValidation = usernameValidation(username);
+        if (usernameValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "username", username, usernameValidation);
         }
 
-        if (!this.userService.isUsernameUnique(username)) {
-            return ResponseFactory.createInvalidParameterError(response, "username", username,
-                    "Username already exists");
+        var passwordValidation = new Validation<>(password, nonNull()
+                .and(minLength(12))
+                        .and(maxLength(50))
+                                .and(new PasswordDiversityValidator()));
+        if (passwordValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "password", "*****", passwordValidation);
         }
 
-        if (password == null) {
-            return ResponseFactory.createInvalidParameterError(response, "password", password);
+        var roleValidation = roleValidation(role);
+        if (roleValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "role", role, roleValidation);
         }
+
         String hash = Password.generateHash(password.toCharArray());
 
         return this.userService.createUser(username, hash, role);
@@ -101,14 +95,14 @@ public class UserController implements RouteGroup {
         String username = getParameter(request, "username");
         String role = getParameter(request, "role");
 
-        // TODO Parameter validation
-
-        if (!this.userService.isUsernameUnique(username)) {
-            return ResponseFactory.createInvalidParameterError(response, "username", username);
+        var roleValidation = roleValidation(role);
+        if (roleValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "role", role, roleValidation);
         }
 
-        if (!Role.validRole(role)) {
-            return ResponseFactory.createInvalidParameterError(response, "role", role);
+        var usernameValidation = usernameValidation(username);
+        if (usernameValidation.failed()) {
+            return ResponseFactory.createInvalidParameterError(response, "username", username, usernameValidation);
         }
 
         var user = this.userService.updateUser(getRequestId(request), username, role);
@@ -133,6 +127,20 @@ public class UserController implements RouteGroup {
         }
 
         return new SuccessResponse();
+    }
+
+
+    private Validation<String> usernameValidation(String username) {
+        var isUsernameUnique = new BooleanValidator<>(this.userService::isUsernameUnique, "Username already exists");
+        var validator = nonNull().and(notEmpty()).and(maxLength(50)).and(isUsernameUnique);
+        return new Validation<>(username, validator);
+    }
+
+
+    private Validation<String> roleValidation(String role) {
+        var roleExists = new BooleanValidator<>(Role::validRole, "Role does not exist");
+        var validator = nonNull().and(notEmpty()).and(roleExists);
+        return new Validation<>(role, validator);
     }
 
 }

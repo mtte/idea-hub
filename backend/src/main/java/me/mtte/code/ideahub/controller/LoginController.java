@@ -35,17 +35,15 @@ public class LoginController {
         String password = getParameter(request, "password");
 
         // Validation
-        var usernameValidation = new Validation<>(username, nonNull()
-                .and(notEmpty()));
+        var usernameValidation = new Validation<>(username, nonNull().and(notEmpty()));
         if (usernameValidation.failed()) {
             return ResponseFactory.createInvalidParameterError(response, "username", username,
-                    usernameValidation.getError().getMessage());
+                    usernameValidation);
         }
-        var passwordValidation = new Validation<>(password, nonNull()
-                .and(notEmpty()));
+        var passwordValidation = new Validation<>(password, nonNull().and(notEmpty()));
         if (passwordValidation.failed()) {
-            return ResponseFactory.createInvalidParameterError(response, "password", password,
-                    passwordValidation.getError().getMessage());
+            return ResponseFactory.createInvalidParameterError(response, "password", "*****",
+                    password);
         }
 
         // Authenticate

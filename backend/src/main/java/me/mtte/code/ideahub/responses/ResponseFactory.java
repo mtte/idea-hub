@@ -1,5 +1,7 @@
 package me.mtte.code.ideahub.responses;
 
+import me.mtte.code.ideahub.validation.Validation;
+import me.mtte.code.ideahub.validation.ValidationError;
 import spark.Request;
 import spark.Response;
 
@@ -22,6 +24,13 @@ public class ResponseFactory {
     public static ErrorResponse createInvalidParameterError(Response response, String parameter, String value, String message, Object... args) {
         response.status(400);
         return new ErrorResponse("Invalid Parameter: '%s' with value '%s'. %s.", parameter, value, String.format(message, args));
+    }
+
+    public static ErrorResponse createInvalidParameterError(Response response, String parameter, String value, Validation v) {
+        if (!v.failed()) {
+            throw new IllegalStateException("Parameter is in fact valid");
+        }
+        return createInvalidParameterError(response, parameter, value, v.getError().getMessage());
     }
 
 }
