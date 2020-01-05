@@ -7,6 +7,7 @@ import UserCrud from '../views/user/Crud'
 import NoteCrud from '../views/note/Crud'
 import NotFound from '../views/404'
 import Forbidden from '../views/403'
+import TwoFA from '../views/TwoFA'
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/2fa',
+    name: 'twoFA',
+    component: TwoFA
   },
   {
     path: '/userOverview',

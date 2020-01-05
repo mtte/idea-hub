@@ -21,6 +21,11 @@
         @blur="$v.password.$touch()"
       />
 
+      <v-text-field
+        v-model="twoFA"
+        label="2FA"
+      />
+
       <v-btn
         class="mr-4"
         :loading="loading"
@@ -55,6 +60,7 @@ export default {
     return {
       username: 'admin',
       password: 'pass4dev',
+      twoFA: '',
 
       loading: false,
       error: null
@@ -83,7 +89,8 @@ export default {
       if (!this.$v.$invalid) {
         const payload = {
           username: this.username,
-          password: this.password
+          password: this.password,
+          '2fa': this.twoFA
         }
         this.axios.post('/login', payload)
           .then(response => {
@@ -94,7 +101,7 @@ export default {
           .catch(error => {
             switch (error.response.status) {
               case 401:
-                this.error = 'Benutzername oder Passwort falsch'
+                this.error = 'Benutzername, Passwort oder 2FA falsch'
                 break
               default:
                 this.error = 'Es ist ein Fehler aufgetreten. Bitte versuchen sie es später nocheinmal.'
@@ -104,11 +111,6 @@ export default {
             this.loading = false
           })
       }
-    },
-    clear () {
-      this.$v.$reset()
-      this.username = ''
-      this.password = ''
     }
   }
 }

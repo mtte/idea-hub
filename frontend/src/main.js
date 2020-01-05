@@ -16,6 +16,12 @@ Vue.axios.interceptors.request.use(function (request) {
   }
   return request
 })
+Vue.axios.interceptors.response.use(undefined, function (error) {
+  if (error.response.status === 403) {
+    router.push('/403')
+  }
+  return Promise.reject(error)
+})
 Vue.axios.defaults.baseURL = 'http://localhost:4567/api'
 Vue.config.productionTip = false
 
