@@ -38,6 +38,7 @@ public class NoteService extends AbstractService {
                 .on(NOTE.AUTHOR.eq(USER.ID))
                 .where(NOTE.AUTHOR.eq(userId)
                         .or(NOTE.SHARED.eq(true)))
+                .orderBy(NOTE.CREATED.desc())
                 .fetch();
         return result.stream()
                 .map(r -> new Note(r.value1(), r.value2(), r.value3(), r.value4(), r.value5(), r.value6()))

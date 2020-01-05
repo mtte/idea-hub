@@ -41,4 +41,4 @@ appender("FILE", RollingFileAppender) {
     }
 }
 
-root(INFO, ["FILE", "STDOUT", "STDERR"])
+root(TRACE, ["FILE", "STDOUT", "STDERR"])
