@@ -41,7 +41,7 @@ public class TwoFactorAuthController implements RouteGroup {
             }
             var secret = TimeBasedOneTimePasswordUtil.generateBase32Secret();
             if (this.userService.enableTwoFactorAuth(user.get().getId(), secret)) {
-                return TimeBasedOneTimePasswordUtil.qrImageUrl(user.get().getUsername(), secret);
+                return TimeBasedOneTimePasswordUtil.qrImageUrl("IdeaHUB (" + user.get().getUsername() + ")", secret);
             }
         }
         response.status(500);
