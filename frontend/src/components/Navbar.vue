@@ -25,6 +25,16 @@
     </v-btn>
 
     <v-btn
+      v-if="$route.name !== 'login'"
+      icon
+      large
+      style="margin-right: 70px"
+      @click="logout"
+    >
+      <v-icon>mdi-logout</v-icon>
+    </v-btn>
+
+    <v-btn
       v-if="role === 'ADMIN' || role === 'AUTHOR'"
       fab
       color="amber accent-4"
@@ -64,6 +74,10 @@ export default {
       } else {
         this.role = ''
       }
+    },
+    logout () {
+      localStorage.removeItem('user')
+      this.$router.push('/login')
     }
   }
 }
